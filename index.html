@@ -10,7 +10,7 @@
 	<script src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery.touchSwipe.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript" src="js/swipe.js"></script>
+    <script type="text/javascript" src="js/swipe.js"></script>
     <style>
     	#mainimage
     	{
@@ -19,14 +19,17 @@
 			background-repeat: no-repeat;
 			width: 100%;
 			margin:0 auto;
+			
 		}
-		.topmenu
+		
+   		.topmenu
    		{
    			width:15%; 
    			text-align:center;
    			color:black;
    			cursor:pointer;
    			height:50px;
+   			
    		}
    		.topmenu:hover
    		{
@@ -49,6 +52,7 @@
    		{
 	   		width:70%; 
 	   		text-align:center;
+	   		
 	   		color:black;
 	   		cursor:pointer;
 	   		height:50px;
@@ -73,159 +77,178 @@
    			color: #428bca;
    		}
    		
-   		.bottommenudiv{
-   			background-color: #85898E;
+   		#bottommenu{
+   			background-color: #00B38B;
    			opacity: 0.6;
 			height:50px;
    		}
+   		.content
+ 	 {
+  
+   padding: 3%;
+   background-color: white;
+   width: 80%;
+   margin: 0 auto;
+   border-radius: 24px;
+  }
    	</style>
-	<script>
-		var previous_distance = 0; 
-		var previous_distance_down = 0;
+	<script id='code_1'>
+		var pre_dis = 0; 
+		var pre_dis_down = 0;
 		var height = 0;
+		var stop_swaping_flag = 0;
+		var contentdivheight = 0;
 		
-			$(document).ready(function()
-			{
-  				height = window.innerHeight; //get height of the browser window.
-				$('#mainimage').height(height-100+'px'); //To leave some space below the page 
-			  	$('#mainBody').height(height+'px');
-			  	$('.bottommenudiv').css('margin-top',height-200+'px');// Place div to the bottom of the page
+			$(document).ready(function(){
+  				height = window.innerHeight;
+				$('#mainimage').height(height-100+'px');
+			  	$('#test').height(height+'px');
+			  	$('#bottommenu').css('margin-top','-50px');
+			  	contentdivheight = $("#contentdiv").height();
 			});
 		
-			//code to get direction and distance of finger swipe
-			$(function() {	
-
-					$("#mainBody").swipe( {
-
+			$(function() {			
+				//Enable swiping...
+					$("#test").swipe( {
+						//Generic swipe handler for all directions
 						swipe:function(event, direction, distance, duration, fingerCount, fingerData)
 						{
-
+							//alert(pre_dis);
 							if(direction == 'up')
 							{
-								var half_distance = 0;
-								//To move image half of the finger swipe
-								half_distance = distance/2;
-								previous_distance = parseInt(previous_distance);//Store previous image moved value, it will help to move image next time
-								var marg = $(".bottommenudiv").position().top;
-								var center_margin = ($('#mainimage').height())/2;
-								marg = -1 * marg;
-								if(center_margin > (marg+half_distance))
+								var dis = 0;
+								dis=distance/2;
+								pre_dis = parseInt(pre_dis);
+								if(pre_dis != null)
 								{
-								if(previous_distance != null)
-								{
-									half_distance = half_distance + previous_distance;	
+									dis = dis + pre_dis;	
 								}
-								previous_distance = half_distance;
-								if((previous_distance+200) >= height) //restrict moving of image after reaches to some height
-								{		
-									$("#mainimage").stop().animate({backgroundPosition: '0px ' + '-'+(height-200)+'px'},{easing:'linear'}, 100);
-         							$("#bottommenu").stop().animate({ marginTop: '-'+(height-200)+'px' },{easing:'linear'}, 100);
-
-
-
-									$(".bottommenudiv").css('opacity','1');
+								if(stop_swaping_flag == 0){
+									pre_dis = dis+dis;	
+								}
+								
+								if((pre_dis+100) >= height)
+								{
+									//$("#mainimage").stop().animate({ backgroundPosition : '0px ' + '-'+(height-150)+'px' }, 100);
+									//$("#bottommenu").stop().animate({ marginTop: '-'+(height-150)+'px' },{easing:'linear'}, 100);
+									$("#bottommenu").css('margin-top','-'+(height-150)+'px');
+									
+									$("#mainimage").css('background-position',"0px -"+(height-150)+'px');
+									//$("#contentdiv").stop().animate({ marginTop: '-100px' },{easing:'linear'}, 100);
+									$("#contentdiv").css('margin-top','-100px');
+									$("#contentdiv").css('position','relative');
+									$("#contentdiv").css('z-index','-1');
+									$("#bottommenu").css('opacity','1');
 									$("#topmenudiv").css('opacity','0.7');
-									$("#topmenudiv").css('background-color','#85898E');
+									$("#topmenudiv").css('background-color','#00B38B');
 									$('#topmenudiv table td').css('border','none'); 
 									$('#bottommenu td').css('border','none');
+									stop_swaping_flag=1;
+									if(pre_dis > height){
+										pre_dis = height;
+									}
+									
 									
 								}
 								else
 								{
 									
-									/******************code to set opacity according to movements************/
-								$("#mainimage").stop().animate({backgroundPosition: '0px ' + '-'+half_distance+'px'},{easing:'linear'}, 100);
-         						$("#bottommenu").stop().animate({ marginTop: '-'+half_distance+'px' },{easing:'linear'}, 100);
-
-
-									var cal_opacity_up = $(".bottommenudiv").position().top;
-									cal_opacity_up = -1 * cal_opacity_up;
-									var cal_opacity_down = 0.7 + height/cal_opacity_up/10;
-									if(cal_opacity_down > 1 || cal_opacity_down < 0.6)
-									{
-										cal_opacity_down = 0.8;
+									//$("#mainimage").stop().animate({ backgroundPosition : '0px ' + '-'+dis+'px' }, 100);
+									$("#mainimage").css('background-position',"0px -"+dis+'px');
+								//	$("#bottommenu").stop().animate({ marginTop: '-'+(dis+dis)+'px' },{easing:'linear'}, 100);
+									$("#bottommenu").css('margin-top','-'+(dis+dis)+'px');    //to move bottom bar up 
+									$("#contentdiv").css('height',($("#contentdiv").height()+dis)+'px');   
+									var temp = $(".bottommenudiv").position().top;
+									temp = -1 * temp;
+									var temp1 = 0.7 + height/temp/10;
+									if(temp1 > 1){
+										
+										temp1 = 0.8;
 									}
-									cal_opacity_up = 0.7 - height/cal_opacity_up/10;
-									if(cal_opacity_up < 0.1 || cal_opacity_up > 0.7)
-									{
-										cal_opacity_up = 0.2;
+									temp = 0.7 - height/temp/10;
+									if(temp < 0.1 || temp > 0.7){
+										temp = 0.2;
 									}
 									
-									$("#topmenudiv").css('opacity',cal_opacity_up);
+									$("#topmenudiv").css('opacity',temp);
 									$("#topmenudiv").css('background-color','#85898E');
-									$('.bottommenudiv').css('opacity',cal_opacity_down);
-
+									//alert(temp1);
+									$('#bottommenu').css('opacity',temp1);
 									
 								} 
-							}else{
-									$("#mainimage").stop().animate({backgroundPosition: '0px ' + '-'+center_margin+'px'},{easing:'linear'}, 100);
-         							$("#bottommenu").stop().animate({ marginTop: '-'+center_margin+'px' },{easing:'linear'}, 100);
-         							previous_distance = center_margin;
-									
-								}
-						}
+							}
 							else if(direction == 'down')
 							{
-								var half_distance = 0;
-								half_distance = distance/2;
-								previous_distance = parseInt(previous_distance);
-
-
-								if(previous_distance != null && previous_distance!=0)
+								
+								stop_swaping_flag = 0;
+								var dis = 0;
+								dis=distance/2;
+								pre_dis = parseInt(pre_dis);
+							
+								if(pre_dis != null && pre_dis!=0)
 								{
-
 									$('#topmenudiv').css("opacity",'1');
 									$("#topmenudiv").css('background-color','transparent');
-									$('.bottommenudiv').css('opacity','0.6');
-									if(previous_distance > half_distance)
+									$('#bottommenu').css('opacity','0.6');
+									//$("#contentdiv").stop().animate({ marginTop: '0px' },{easing:'linear'}, 100);
+									$("#contentdiv").css('margin-top','0px');
+									//alert("pre_dis "+pre_dis+" dis "+dis);
+									//alert(dis);
+									if(pre_dis > dis)
 									{
-										half_distance = previous_distance - half_distance;
-										previous_distance = half_distance;
-										$("#mainimage").stop().animate({backgroundPosition: '0px ' + '-'+half_distance+'px'},{easing:'linear'}, 100);
-	         							$("#bottommenu").stop().animate({ marginTop: '-'+half_distance+'px' },{easing:'linear'}, 100);
-	         							
+										dis = pre_dis - dis;
+										pre_dis = dis;
+										//$("#bottommenu").stop().animate({ marginTop: '-'+dis+'px' },{easing:'linear'}, 100);
+										$("#bottommenu").css('margin-top','-'+(dis)+'px');
+										
+										//$("#mainimage").stop().animate({ backgroundPosition : '0px ' + '-'+dis+'px' }, 100);
+										$("#mainimage").css('background-position',"0px -"+dis+'px');
 										$('#topmenudiv table td').css('border','1.5px solid black'); 
 										$('#bottommenu td').css('border','1.5px solid black');
-										
-										/******************code to set opacity according to movements************/
-										
-										var cal_opacity_up = $(".bottommenudiv").position().top;
-										cal_opacity_up = -1 * cal_opacity_up;
-										var cal_opacity_down = 1 - height/cal_opacity_up/10;
-										cal_opacity_up = 0.7 - height/cal_opacity_up/10;
-										if(cal_opacity_up < 0.1 || cal_opacity_up > 0.7)
-										{
-											cal_opacity_up = 0.1;
+										//$("#contentdiv").css('height',($("#contentdiv").height()-dis)+'px');
+										var temp = $(".bottommenudiv").position().top;
+										temp = -1 * temp;
+										var temp1 = 1 - height/temp/10;
+										temp = 0.7 - height/temp/10;
+										if(temp < 0.1 || temp > 0.7){
+											temp = 0.1;
 										}
-										if(cal_opacity_down < 0.7 )
-										{
-											cal_opacity_down = 0.7;
+										if(temp1 < 0.7 ){
+											temp1 = 0.7;
 										}
-										
-
-										$("#topmenudiv").css('opacity',cal_opacity_up);
+									
+										$("#topmenudiv").css('opacity',temp);
 										$("#topmenudiv").css('background-color','#85898E');
-										$('.bottommenudiv').css('opacity',cal_opacity_down);
+										$('#bottommenu').css('opacity',temp1);
 									}
 									else
 									{
-										$("#mainimage").stop().animate({backgroundPosition: '0px 0px'},{easing:'linear'}, 100);
-	         							$("#bottommenu").stop().animate({ marginTop: '0px' },{easing:'linear'}, 100);
-										previous_distance = 0;
+										//$("#mainimage").stop().animate({ backgroundPosition :'0px 0px' }, 100);
+									
+										$("#bottommenu").css('margin-top','-50px');
+										//$("#bottommenu").stop().animate({ marginTop: '-50px' },{easing:'linear'}, 100);
+										$("#mainimage").css('background-position',"0px 0px");
+										//$("#contentdiv").stop().animate({ marginTop: '0px' },{easing:'linear'}, 100);
+										$("#contentdiv").css('margin-top','0px');
+									
+										$("#contentdiv").css('height',contentdivheight);
+										
+										pre_dis = 0;
+										dis = 0 ;
+										location.reload();
 									}
 								}
 							}
-
 						 },
-
+						 
 					   	 threshold:0
 					});
 			});
 		</script>
   	</head>
-  	<body id="mainBody">
+  	<body id="test">
 		<div class="container">  
-  			<div  id="mainimage" style="background-color: #618eac;">
+  			<div  id="mainimage">
   				<div id="topmenudiv">
   					<table style="width:100%;border:1px solid black;">
       					<tr>
@@ -235,17 +258,35 @@
       					</tr>
 			      	</table>  
   				</div>
-			  	<div class="bottommenudiv"> 
-			 		<table style="width:100%; height:100%;" id="bottommenu">
+			  	
+		 	</div>
+		 	<div class="bottommenudiv" > 
+			 		<table style="width:100%;" id="bottommenu">
 			      		<tr>
 			      			<td class="bottomnav" ><span class="glyphicon glyphicon-envelope"></span> Message</td>
     			  			<td class="bottomnav"><span class="glyphicon glyphicon-home"></span> Home</td>
       						<td class="bottomnav"><span class="glyphicon glyphicon-camera"></span> Camera</td>
       					</tr>
-      				</table>  
-
+      				</table> 
+      				<div id="contentdiv" style="background-color:#00B38B;">
+      				<br>
+						<div class='content'>
+							<h2>Nathan</h2>
+							<p>Vong</p>
+							<p>Bluebird It</p>
+							<p>CEO</p>
+							</div>
+							<br/>
+							<div class='content'>
+							<h2>Nathan</h2>
+							<p>Vong</p>
+							<p>Bluebird It</p>
+							<p>CEO</p>
+							</div>
+							<br/>
+						</div>
+      				
  				</div>
-		 	</div>
  		</div>        
 	</body>
 </html>
